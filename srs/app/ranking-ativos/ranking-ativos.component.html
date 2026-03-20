@@ -1,0 +1,32 @@
+<div class="ranking-container">
+  <h2 class="titulo-sessao">🏆 Ranking de Lucratividade</h2>
+
+  <div class="lista-ativos">
+    <div *ngFor="let ativo of ativos; let i = index" class="card-ativo">
+      
+      <div class="header-ativo">
+        <span class="posicao">#{{ i + 1 }}</span>
+        <span class="simbolo">{{ ativo.simbolo }}</span>
+      </div>
+
+      <div class="detalhes-ativo">
+        <div class="info">
+          <span class="label">Preço Médio Compra:</span>
+          <span class="valor">R$ {{ ativo.precoMedioCompra | number:'1.2-2':'pt-BR' }}</span>
+        </div>
+        <div class="info">
+          <span class="label">Cotação Atual:</span>
+          <span class="valor">R$ {{ ativo.precoAtual | number:'1.2-2':'pt-BR' }}</span>
+        </div>
+      </div>
+
+      <div class="rentabilidade" [ngClass]="ativo.percentualLucro >= 0 ? 'lucro' : 'prejuizo'">
+        <span class="label-rentabilidade">Rentabilidade:</span>
+        <span class="valor-percentual">
+          {{ ativo.percentualLucro >= 0 ? '+' : '' }}{{ ativo.percentualLucro | number:'1.1-2':'pt-BR' }}%
+        </span>
+      </div>
+      
+    </div>
+  </div>
+</div>

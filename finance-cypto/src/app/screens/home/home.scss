@@ -1,0 +1,198 @@
+@mixin flex-center($direction: row, $justify: center, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+.home-container {
+  min-height: 100vh;
+  background-color: #f4f5f7;
+  padding: 40px 20px;
+  @include flex-center(column, flex-start); 
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.home-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08); 
+  width: 100%;
+  max-width: 600px; 
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.home-header {
+  width: 100%;
+  @include flex-center(row, space-between, center);
+  margin-bottom: 0;
+
+  .title {
+    color: #001e40; 
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .subtitle {
+    color: #718096;
+    font-size: 14px;
+    margin: 4px 0 0 0;
+  }
+
+  .link-sair {
+    color: #1a73e8; 
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin: 24px 0;
+}
+
+/* Seção de Saldo */
+.balance-section {
+  text-align: center;
+  margin-bottom: 32px;
+
+  .label-text {
+    color: #4a5568;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .balance-value {
+    color: #001e40;
+    font-size: 42px;
+    font-weight: 700;
+    margin: 0 0 24px 0;
+  }
+}
+
+/* Botões do Dashboard */
+.action-buttons {
+  @include flex-center(row, center, center);
+  gap: 16px;
+
+  button {
+    flex: 1;
+    max-width: 200px;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    @include flex-center(row, center, center);
+    gap: 8px;
+
+    .icon {
+      font-size: 1.1em;
+    }
+  }
+
+  .btn-primary {
+    background-color: #1a73e8; 
+    color: white;
+    border: none;
+
+    &:hover {
+      background-color: #1557b0;
+      transform: translateY(-1px);
+    }
+  }
+
+  /* Botão secundário */
+  .btn-outline {
+    background-color: white;
+    color: #1a73e8;
+    border: 1px solid #1a73e8;
+
+    &:hover {
+      background-color: #f0f4f8;
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.list-section {
+  .card-subtitle {
+    color: #001e40;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+  }
+}
+
+.crypto-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.crypto-item {
+  @include flex-center(row, space-between, center);
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f9fafb; 
+  border: 1px solid transparent;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #e2e8f0;
+    background-color: white;
+  }
+
+  .crypto-brand {
+    @include flex-center(row, flex-start, center);
+    gap: 12px;
+  }
+
+  .crypto-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .crypto-info, .crypto-values {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .crypto-values {
+    align-items: flex-end;
+  }
+
+  strong {
+    color: #001e40;
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  span {
+    color: #718096;
+    font-size: 13px;
+  }
+
+  .badge {
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    &.positive { color: #16a34a; } 
+    &.negative { color: #dc2626; } 
+  }
+}

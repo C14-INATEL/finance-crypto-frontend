@@ -1,0 +1,15 @@
+.bg-gray-100 {
+    background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
+}
+
+.rounded-xl {
+    border-radius: 1rem;
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.hover\:bg-blue-700:hover {
+    background-color: #1d4ed8;
+}

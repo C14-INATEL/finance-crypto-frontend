@@ -13,14 +13,19 @@
     <hr class="divider">
 
     <section class="balance-section">
-      <p class="label-text">Patrimônio Atualizado</p>
-      <h1 class="balance-value">R$ 14.520,00</h1>
+      <p class="label-text" (click)="alternarVisibilidadeSaldo()" style="cursor: pointer;" title="Clique para ocultar/mostrar">
+        Patrimônio Atualizado <span style="font-size: 16px;">{{ saldoVisivel ? '👁️' : '🙈' }}</span>
+      </p>
+      
+      <h1 class="balance-value">
+        {{ saldoVisivel ? 'R$ ' + patrimonioTotal : 'R$ •••••••' }}
+      </h1>
       
       <div class="action-buttons">
-        <button class="btn-primary">
+        <button class="btn-primary" (click)="comprarAtivo(500)">
           <span class="icon">↑</span> Comprar Ativo
         </button>
-        <button class="btn-outline">
+        <button class="btn-outline" (click)="venderAtivo(500)">
           <span class="icon">↓</span> Vender Ativo
         </button>
       </div>
@@ -40,7 +45,7 @@
           </div>
           <div class="crypto-values">
             <strong>R$ 10.200,00</strong>
-            <span class="badge positive">↑ +5.2%</span>
+            <span class="badge" [ngClass]="obterClasseBadge(5.2)">↑ +5.2%</span>
           </div>
         </div>
 
@@ -54,7 +59,7 @@
           </div>
           <div class="crypto-values">
             <strong>R$ 4.320,00</strong>
-            <span class="badge negative">↓ -1.2%</span>
+            <span class="badge" [ngClass]="obterClasseBadge(-1.2)">↓ -1.2%</span>
           </div>
         </div>
       </div>

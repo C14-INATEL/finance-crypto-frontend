@@ -1,0 +1,90 @@
+.ranking-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f4f7f6;
+  border-radius: 10px;
+}
+
+.titulo-sessao {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.lista-ativos {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card-ativo {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.card-ativo:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.header-ativo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.posicao {
+  font-weight: bold;
+  color: #7f8c8d;
+  font-size: 1.1em;
+}
+
+.simbolo {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #34495e;
+}
+
+.detalhes-ativo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+  color: #555;
+  font-size: 0.9em;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.label {
+  color: #888;
+}
+
+.rentabilidade {
+  text-align: right;
+  font-weight: bold;
+  padding-top: 5px;
+  border-top: 1px solid #eee;
+}
+
+.valor-percentual {
+  font-size: 1.1em;
+}
+
+/* Classes de utilidade para as cores */
+.lucro {
+  color: #27ae60; /* Verde */
+}
+
+.prejuizo {
+  color: #c0392b; /* Vermelho */
+}

@@ -1,0 +1,28 @@
+/* Estilos para a tela de criação de conta */
+
+body {
+    background-color: #f9fafb;
+}
+
+h2 {
+    color: #1f2937;
+}
+
+input {
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+button {
+    background-color: #2563eb;
+    color: white;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #1d4ed8;
+}

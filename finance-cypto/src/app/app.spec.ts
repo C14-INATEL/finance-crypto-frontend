@@ -32,6 +32,8 @@ describe('App Routing', () => {
     await router.navigate(['/signup']);
     expect(location.path()).toBe('/signup');
   });
+  
+});
 
   it('deve navegar para a rota "/login"', async () => {
     await router.navigate(['/login']);

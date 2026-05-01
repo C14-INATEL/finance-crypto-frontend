@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -7,20 +7,24 @@ import { FormsModule } from '@angular/forms';
     standalone: true,
     imports: [CommonModule, FormsModule],
     templateUrl: './signup.html',
-    styleUrls: ['./signup.scss'],
 })
 export class SignupComponent {
 
-    name: string = '';
-    email: string = '';
-    password: string = '';
+    name = '';
+    email = '';
+    password = '';
+    errorMessage = '';
 
-    onSignup() {
-        console.log('Signup data:', {
-            name: this.name,
-            email: this.email,
-            password: this.password
-        });
+    constructor(@Inject('SignupService') private signupService: any) { }
+
+    async onSignup() {
+        try {
+            await this.signupService.register(this.name, this.email, this.password);
+            console.log('Conta criada com sucesso para:', this.name);
+            this.errorMessage = '';
+        } catch (error) {
+            this.errorMessage = 'Erro ao criar conta. Tente novamente.';
+            console.error('Signup falhou:', error);
+        }
     }
-
 }

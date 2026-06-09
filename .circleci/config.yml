@@ -29,9 +29,7 @@ jobs:
           at: ~/project
       - run:
           name: Executar Testes Unitários com Vitest
-          command: |
-            cd finance-cypto
-            npx ng test
+          command: cd finance-cypto && npx ng test --watch=false
 
 workflows:
   version: 2

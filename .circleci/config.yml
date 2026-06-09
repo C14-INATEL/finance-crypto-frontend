@@ -12,12 +12,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Instalar Dependências
-          command: npm install
+          name: Instalar Dependências na subpasta do projeto
+          command: |
+            cd finance-cypto
+            npm install
       - persist_to_workspace:
           root: ~/project
           paths:
-            - node_modules
+            - finance-cypto/node_modules
 
   rodar_testes:
     executor: node-executor
@@ -27,7 +29,9 @@ jobs:
           at: ~/project
       - run:
           name: Executar Testes Unitários com Vitest
-          command: npx ng test --watch=false
+          command: |
+            cd finance-cypto
+            npx ng test --watch=false
 
 workflows:
   version: 2

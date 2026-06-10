@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Login } from './login';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 import { vi } from 'vitest';
 
 describe('Login Component', () => {
@@ -11,11 +12,16 @@ describe('Login Component', () => {
     login: vi.fn()
   };
 
+  const routerMock = {
+    navigate: vi.fn().mockResolvedValue(true)
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Login],
       providers: [
-        { provide: AuthService, useValue: authServiceMock }
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: Router, useValue: routerMock }
       ]
     }).compileComponents();
 
@@ -46,6 +52,7 @@ describe('Login Component', () => {
     await component.onLogin();
 
     expect(authServiceMock.login).toHaveBeenCalledWith('seu@email.com', 'senha123');
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/home']);
   });
 
   it('deve exibir mensagem de erro quando o serviço falhar', async () => {

@@ -1,0 +1,59 @@
+<div class="max-w-5xl mx-auto w-full">
+
+  <div class="flex items-center gap-3 mb-6">
+    <span class="text-2xl">🏆</span>
+    <h2 class="text-2xl font-bold tracking-wide text-zinc-100">
+      Ranking de Lucratividade
+    </h2>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+    <div *ngFor="let ativo of ativos; let i = index"
+      class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-5 shadow-lg shadow-black/30 hover:border-amber-500/30 transition-all duration-300 flex flex-col justify-between group">
+
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-sm font-black tracking-wider px-2.5 py-1 rounded-md" [ngClass]="{
+                'bg-amber-500/15 text-amber-400 border border-amber-500/30': i === 0,
+                'bg-zinc-400/10 text-zinc-300 border border-zinc-400/20': i === 1,
+                'bg-amber-700/15 text-amber-600 border border-amber-700/20': i === 2,
+                'bg-zinc-800 text-zinc-500': i > 2
+              }">
+          #{{ i + 1 }}
+        </span>
+        <span
+          class="text-lg font-bold text-zinc-100 group-hover:text-amber-400 transition-colors uppercase tracking-wide">
+          {{ ativo.simbolo }}
+        </span>
+      </div>
+
+      <div class="space-y-2.5 border-y border-zinc-800/60 py-3 my-3">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-zinc-500">Pm. Compra:</span>
+          <span class="font-medium text-zinc-300">
+            R$ {{ ativo.precoMedioCompra | number:'1.2-2':'pt-BR' }}
+          </span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-zinc-500">Cotação Atual:</span>
+          <span class="font-semibold text-zinc-200">
+            R$ {{ ativo.precoAtual | number:'1.2-2':'pt-BR' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center mt-2 p-2 rounded-lg bg-zinc-950/40"
+        [ngClass]="ativo.percentualLucro >= 0 ? 'border border-emerald-500/10' : 'border border-rose-500/10'">
+
+        <span class="text-xs text-zinc-400 font-medium">Rentabilidade:</span>
+
+        <span class="text-sm font-bold px-2 py-0.5 rounded"
+          [ngClass]="ativo.percentualLucro >= 0 ? 'text-emerald-400 bg-emerald-500/10' : 'text-rose-400 bg-rose-500/10'">
+          {{ ativo.percentualLucro >= 0 ? '+' : '' }}{{ ativo.percentualLucro | number:'1.1-2':'pt-BR' }}%
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+</div>

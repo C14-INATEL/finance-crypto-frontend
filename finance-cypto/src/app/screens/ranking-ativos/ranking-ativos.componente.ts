@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-ranking-ativos',
-  templateUrl: './ranking-ativos.component.html',
-  styleUrls: ['./ranking-ativos.component.css']
+  imports: [CommonModule],
+  templateUrl: './ranking-ativos.component.html'
 })
 export class RankingAtivosComponent implements OnInit {
 
-  // Lista mockada (dados falsos) baseada exatamente no contrato
-  // que definimos no DTO do Backend.
   ativos = [
     {
       simbolo: 'BTC',
@@ -39,7 +38,7 @@ export class RankingAtivosComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    // No futuro, aqui o Angular chamará o Backend real.
+
   }
 
 }

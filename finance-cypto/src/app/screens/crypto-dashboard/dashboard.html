@@ -1,0 +1,116 @@
+<div class="min-h-screen p-4 md:p-8 text-zinc-100 font-sans">
+
+    <div class="mb-8">
+        <h1
+            class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-600 uppercase tracking-widest">
+            Dashboard Cripto
+        </h1>
+        <p class="text-zinc-500 text-sm mt-1">Análise macro e cotações em tempo real</p>
+    </div>
+
+    @if(carregando) {
+    <div class="flex h-64 items-center justify-center text-amber-500 font-bold animate-pulse">
+        Carregando informações do mercado...
+    </div>
+    } @else {
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 shadow-lg shadow-black/40">
+            <p class="text-zinc-500 text-xs uppercase font-semibold tracking-wider">Total Monitorado</p>
+            <h2 class="text-3xl text-white font-black mt-1 font-mono">{{ criptos.length }}</h2>
+        </div>
+
+        <div class="bg-zinc-900 border border-emerald-500/20 rounded-xl p-5 shadow-lg shadow-black/40">
+            <p class="text-emerald-500 text-xs uppercase font-semibold tracking-wider">Maior Alta (24h)</p>
+            <h2 class="text-white font-bold mt-1 truncate text-lg">{{ maiorAlta?.name }}</h2>
+            <p class="text-emerald-400 font-mono text-sm font-bold mt-0.5">+{{ maiorAlta?.price_change_percentage_24h |
+                number:'1.2-2':'pt-BR' }}%</p>
+        </div>
+
+        <div class="bg-zinc-900 border border-rose-500/20 rounded-xl p-5 shadow-lg shadow-black/40">
+            <p class="text-rose-500 text-xs uppercase font-semibold tracking-wider">Maior Queda (24h)</p>
+            <h2 class="text-white font-bold mt-1 truncate text-lg">{{ maiorQueda?.name }}</h2>
+            <p class="text-rose-400 font-mono text-sm font-bold mt-0.5">{{ maiorQueda?.price_change_percentage_24h |
+                number:'1.2-2':'pt-BR' }}%</p>
+        </div>
+
+        <div class="bg-zinc-900 border border-amber-500/20 rounded-xl p-5 shadow-lg shadow-black/40">
+            <p class="text-amber-500 text-xs uppercase font-semibold tracking-wider">Market Cap Líder</p>
+            <h2 class="text-white font-bold mt-1 truncate text-lg">{{ criptos[0]?.name }}</h2>
+            <p class="text-zinc-500 text-xs uppercase mt-1 tracking-widest font-semibold">{{ criptos[0]?.symbol }}</p>
+        </div>
+    </div>
+
+    <div class=" border border-zinc-800 rounded-2xl p-6  mb-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div>
+                <h3 class="text-lg font-bold text-zinc-200">Histórico de Preço (7 Dias)</h3>
+                <p class="text-xs text-zinc-500 mt-0.5">Selecione uma criptomoeda abaixo para atualizar o gráfico</p>
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <select [value]="criptoSelecionadaId" (change)="onCriptoChange($event)"
+                    class="w-full sm:w-56 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-amber-500/60 outline-none transition cursor-pointer font-medium">
+                    @for(crypto of criptos; track crypto.id) {
+                    <option [value]="crypto.id">{{ crypto.name }} ({{ crypto.symbol | uppercase }})</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="w-full">
+            <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [stroke]="chartOptions.stroke"
+                [colors]="chartOptions.colors" [dataLabels]="chartOptions.dataLabels" [fill]="chartOptions.fill"
+                [grid]="chartOptions.grid" [xaxis]="chartOptions.xaxis" [yaxis]="chartOptions.yaxis"
+                [tooltip]="chartOptions.tooltip">
+            </apx-chart>
+        </div>
+    </div>
+
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead
+                    class="bg-zinc-950/60 text-zinc-500 uppercase tracking-wider text-xs border-b border-zinc-800/80">
+                    <tr>
+                        <th class="p-5 text-left font-semibold">Ativo</th>
+                        <th class="p-5 text-right font-semibold">Preço Atual</th>
+                        <th class="p-5 text-right font-semibold">Var. 24h</th>
+                        <th class="p-5 text-right font-semibold hidden sm:table-cell">Market Cap</th>
+                        <th class="p-5 text-right font-semibold hidden lg:table-cell">Volume</th>
+                    </tr>
+                </thead>
+                <tbody class="text-zinc-300 divide-y divide-zinc-800/50">
+                    @for(crypto of criptos; track crypto.id){
+                    <tr class="hover:bg-zinc-800/30 transition-colors group">
+                        <td class="p-4 flex items-center gap-3">
+                            <img [src]="crypto.image"
+                                class="w-8 h-8 rounded-full border border-zinc-800/80 p-0.5 bg-zinc-950">
+                            <div>
+                                <p class="text-zinc-100 font-bold group-hover:text-amber-400 transition-colors">{{
+                                    crypto.name }}</p>
+                                <p class="text-zinc-500 text-xs font-mono">{{ crypto.symbol | uppercase }}</p>
+                            </div>
+                        </td>
+                        <td class="p-4 text-right font-mono font-semibold text-zinc-100">
+                            R$ {{ crypto.current_price | number:'1.2-2':'pt-BR' }}
+                        </td>
+                        <td class="p-4 text-right font-mono font-bold"
+                            [class]="crypto.price_change_percentage_24h >= 0 ? 'text-emerald-400' : 'text-rose-400'">
+                            {{ crypto.price_change_percentage_24h >= 0 ? '+' : '' }}{{
+                            crypto.price_change_percentage_24h | number:'1.2-2':'pt-BR' }}%
+                        </td>
+                        <td class="p-4 text-right hidden sm:table-cell font-mono text-zinc-400">
+                            R$ {{ crypto.market_cap | number:'1.0-0':'pt-BR' }}
+                        </td>
+                        <td class="p-4 text-right hidden lg:table-cell font-mono text-zinc-400">
+                            R$ {{ crypto.total_volume | number:'1.0-0':'pt-BR' }}
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    }
+</div>

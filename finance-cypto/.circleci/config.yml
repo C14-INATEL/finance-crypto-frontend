@@ -13,11 +13,13 @@ jobs:
       - checkout
       - run:
           name: Instalar Dependências
-          command: npm install
+          command: |
+            cd finance-cypto
+            npm install
       - persist_to_workspace:
           root: ~/project
           paths:
-            - node_modules
+            - finance-cypto/node_modules
 
   rodar_testes:
     executor: node-executor
@@ -27,7 +29,27 @@ jobs:
           at: ~/project
       - run:
           name: Executar Testes Unitários com Vitest
-          command: npx ng test --watch=false
+          command: cd finance-cypto && npx ng test --watch=false
+
+  auditoria_seguranca:
+    executor: node-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Auditoria de Segurança de Pacotes
+          command: cd finance-cypto && npm audit || true
+
+  build_projeto:
+    executor: node-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Build da Aplicação Angular
+          command: cd finance-cypto && npm run build
 
 workflows:
   version: 2
@@ -37,3 +59,10 @@ workflows:
       - rodar_testes:
           requires:
             - instalar_dependencias
+      - auditoria_seguranca:
+          requires:
+            - instalar_dependencias
+      - build_projeto:
+          requires:
+            - rodar_testes
+            - auditoria_seguranca

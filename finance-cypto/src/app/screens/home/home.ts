@@ -1,36 +1,32 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { CryptoService } from './crypto.service'; // Puxando o serviço
+import { CryptoService } from '../../services/crypto.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './home.html',
-  styleUrls: ['./home.scss']
+  templateUrl: './home.html'
 })
 export class Home {
   patrimonioTotal: number = 14520;
   saldoVisivel: boolean = true;
-  
+
   precoAtualBtc: number = 0;
   mensagemErroApi: string = '';
 
-  // Injetando o serviço no componente
-  constructor(private cryptoService: CryptoService) {}
+  constructor(private cryptoService: CryptoService) { }
 
-  // Função que tenta buscar o preço e trata o erro caso a API falhe
   atualizarCotacao(): void {
     try {
       this.precoAtualBtc = this.cryptoService.buscarPrecoBitcoinApi();
-      this.mensagemErroApi = ''; 
+      this.mensagemErroApi = '';
     } catch (error) {
       this.mensagemErroApi = 'Falha na conexão com a API de Criptomoedas';
     }
   }
 
-  // --- Funções antigas que você já tinha ---
   alternarVisibilidadeSaldo(): void {
     this.saldoVisivel = !this.saldoVisivel;
   }

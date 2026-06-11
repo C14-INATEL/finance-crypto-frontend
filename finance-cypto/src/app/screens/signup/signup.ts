@@ -1,6 +1,7 @@
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-signup',
@@ -15,11 +16,11 @@ export class SignupComponent {
     password = '';
     errorMessage = '';
 
-    constructor(@Inject('SignupService') private signupService: any) { }
+    constructor(private authService: AuthService) { }
 
     async onSignup() {
         try {
-            await this.signupService.register(this.name, this.email, this.password);
+            await this.authService.signup(this.name, this.email, this.password);
             console.log('Conta criada com sucesso para:', this.name);
             this.errorMessage = '';
         } catch (error) {

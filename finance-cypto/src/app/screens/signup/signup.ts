@@ -1,31 +1,40 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-signup',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [FormsModule, CommonModule],
     templateUrl: './signup.html',
 })
 export class SignupComponent {
-
-    name = '';
+    username = '';
     email = '';
     password = '';
     errorMessage = '';
+    carregando = false;
 
-    constructor(private authService: AuthService) { }
+    constructor(private authService: AuthService, private router: Router) { }
 
-    async onSignup() {
-        try {
-            await this.authService.signup(this.name, this.email, this.password);
-            console.log('Conta criada com sucesso para:', this.name);
-            this.errorMessage = '';
-        } catch (error) {
-            this.errorMessage = 'Erro ao criar conta. Tente novamente.';
-            console.error('Signup falhou:', error);
-        }
+    onSignup() {
+        this.carregando = true;
+        this.errorMessage = '';
+
+        this.authService.signup(this.username, this.email, this.password).subscribe({
+            next: () => {
+                this.router.navigate(['/login']);
+            },
+            error: (erro) => {
+                if (erro.status === 409) {
+                    this.errorMessage = 'Este usuário já existe.';
+                } else {
+                    this.errorMessage = 'Erro ao criar a conta.';
+                }
+                this.carregando = false;
+            }
+        });
     }
 }

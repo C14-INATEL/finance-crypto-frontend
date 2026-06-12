@@ -2,36 +2,43 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './login.html',
 })
 export class Login {
-  email = '';
+  username = '';
   password = '';
   errorMessage = '';
   carregando = false;
 
   constructor(private authService: AuthService, private router: Router) { }
 
-  async onLogin() {
+  onLogin() {
     this.carregando = true;
     this.errorMessage = '';
 
-    try {
-      await this.authService.login(this.email, this.password);
-      console.log('Login com sucesso! O estado global foi atualizado.');
-
-      this.router.navigate(['/home']);
-
-    } catch (error: any) {
-      this.errorMessage = error.message || 'Erro inesperado ao fazer login';
-      console.error(this.errorMessage);
-    } finally {
-      this.carregando = false;
-    }
+    this.authService.login(this.username, this.password).subscribe({
+      next: () => {
+        console.log('Login efetuado com sucesso! Token JWT salvo.');
+        this.router.navigate(['/home']);
+      },
+      error: (erro) => {
+        if (erro.status === 401) {
+          this.errorMessage = 'Usuário ou senha incorretos.';
+        } else {
+          this.errorMessage = 'Erro ao conectar com o servidor.';
+        }
+        console.error(erro);
+        this.carregando = false;
+      },
+      complete: () => {
+        this.carregando = false;
+      }
+    });
   }
 }

@@ -1,93 +1,80 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Home } from './home';
 import { CryptoService } from '../../services/crypto.service';
 
-// Interface que define o formato dos dados da nossa carteira
-export interface AtivoCarteira {
-  id: string;
-  nome: string;
-  simbolo: string;
-  quantidade: number;
-  valorTotal: number;
-  variacao: number;
-  icone: string;
-  alocacao: number;
-}
-
-@Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './home.html'
-})
-export class Home {
-  // Variáveis de estado da tela
-  saldoVisivel: boolean = true;
-  patrimonioTotal: number = 1000;
-  precoAtualBtc: number = 0;
-  mensagemErroApi: string = '';
-
-  // Nossa lista dinâmica (o Mock da Carteira) que o HTML está procurando!
-  minhaCarteira: AtivoCarteira[] = [
-    { 
-      id: '1', 
-      nome: 'Bitcoin', 
-      simbolo: 'BTC', 
-      quantidade: 0.05, 
-      valorTotal: 10200.00, 
-      variacao: 5.2, 
-      icone: 'https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=032',
-      alocacao: 70
-    },
-    { 
-      id: '2', 
-      nome: 'Ethereum', 
-      simbolo: 'ETH', 
-      quantidade: 0.30, 
-      valorTotal: 4320.00, 
-      variacao: -1.2, 
-      icone: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=032',
-      alocacao: 30
-    }
-  ];
-
-  constructor(private cryptoService: CryptoService) {}
-
-  // Lógicas e Regras de Negócio
-  alternarVisibilidadeSaldo() {
-    this.saldoVisivel = !this.saldoVisivel;
-  }
-
-  comprarAtivo(valor: number): boolean {
-    if (valor > 0) {
-      this.patrimonioTotal += valor;
-      return true;
-    }
-    return false;
-  }
-
-  venderAtivo(valor: number): boolean {
-    if (valor > 0 && this.patrimonioTotal >= valor) {
-      this.patrimonioTotal -= valor;
-      return true;
-    }
-    return false;
-  }
-
-  obterClasseBadge(variacao: number): string {
-    if (variacao > 0) return 'positive';
-    if (variacao < 0) return 'negative';
-    return '';
-  }
-
-  atualizarCotacao() {
-    try {
-      this.precoAtualBtc = this.cryptoService.buscarPrecoBitcoinApi();
-      this.mensagemErroApi = '';
-    } catch (error) {
-      this.mensagemErroApi = 'Falha na conexão com a API de Criptomoedas';
-      this.precoAtualBtc = 0;
-    }
+class MockCryptoService {
+  buscarPrecoBitcoinApi(): number {
+    return 99999;
   }
 }
+
+describe('Home', () => {
+  let component: Home;
+  let fixture: ComponentFixture<Home>;
+  let cryptoService: CryptoService;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Home, RouterTestingModule],
+      providers: [
+        { provide: CryptoService, useClass: MockCryptoService }
+      ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Home);
+    component = fixture.componentInstance;
+    cryptoService = TestBed.inject(CryptoService);
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('Teste 1: Deve alternar a visibilidade do saldo na tela', () => {
+    expect(component.saldoVisivel).toBe(true);
+    component.alternarVisibilidadeSaldo();
+    expect(component.saldoVisivel).toBe(false);
+    component.alternarVisibilidadeSaldo();
+    expect(component.saldoVisivel).toBe(true);
+  });
+
+  it('Teste 2: Deve aplicar a classe CSS correta na badge de rentabilidade', () => {
+    expect(component.obterClasseBadge(5.2)).toBe('positive');
+    expect(component.obterClasseBadge(-1.2)).toBe('negative');
+  });
+
+  it('Teste 3: Deve aumentar o patrimônio ao comprar um ativo válido', () => {
+    component.patrimonioTotal = 1000;
+    expect(component.comprarAtivo(500)).toBe(true);
+    expect(component.patrimonioTotal).toBe(1500);
+    expect(component.comprarAtivo(-100)).toBe(false);
+  });
+
+  it('Teste 4: Deve diminuir o patrimônio ao vender ativo e impedir saldo negativo', () => {
+    component.patrimonioTotal = 2000;
+    expect(component.venderAtivo(500)).toBe(true);
+    expect(component.patrimonioTotal).toBe(1500);
+    expect(component.venderAtivo(5000)).toBe(false);
+  });
+
+  it('Teste 5 (Mock): Deve atualizar a cotação usando os dados simulados da API', () => {
+    expect(component.precoAtualBtc).toBe(0);
+
+    component.atualizarCotacao();
+
+    expect(component.precoAtualBtc).toBe(99999);
+    expect(component.mensagemErroApi).toBe('');
+  });
+
+  it('Teste 6 (Mock): Deve tratar erro e exibir mensagem se a API falhar', () => {
+    cryptoService.buscarPrecoBitcoinApi = () => { throw new Error('API Offline'); };
+
+    component.atualizarCotacao();
+
+    expect(component.mensagemErroApi).toBe('Falha na conexão com a API de Criptomoedas');
+    expect(component.precoAtualBtc).toBe(0);
+  });
+
+});

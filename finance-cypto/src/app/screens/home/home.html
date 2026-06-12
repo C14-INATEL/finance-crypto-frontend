@@ -43,48 +43,87 @@
     </section>
 
     <section>
-      <h3 class="text-lg font-semibold text-zinc-200 mb-4">Rentabilidade dos Ativos</h3>
+      <div class="flex justify-between items-end mb-4">
+        <h3 class="text-lg font-semibold text-zinc-200">Meus Ativos</h3>
+        <span class="text-sm text-zinc-500">Alocação da Carteira</span>
+      </div>
 
       <div class="space-y-3">
-        <div
-          class="flex justify-between items-center bg-zinc-950/50 border border-zinc-800/60 p-4 rounded-xl hover:border-amber-500/40 transition-colors group">
-          <div class="flex items-center gap-4">
-            <div class="bg-zinc-800 p-2 rounded-full group-hover:bg-zinc-700 transition-colors">
-              <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=032" alt="BTC" class="w-8 h-8">
+        @for (ativo of minhaCarteira; track ativo.id) {
+          <div class="flex flex-col bg-zinc-950/50 border border-zinc-800/60 p-4 rounded-xl hover:border-amber-500/40 transition-colors group">
+            
+            <div class="flex justify-between items-center mb-3">
+              <div class="flex items-center gap-4">
+                <div class="bg-zinc-800 p-2 rounded-full group-hover:bg-zinc-700 transition-colors">
+                  <img [src]="ativo.icone" [alt]="ativo.simbolo" class="w-8 h-8">
+                </div>
+                <div class="flex flex-col">
+                  <strong class="text-zinc-100 text-base">{{ ativo.nome }} ({{ ativo.simbolo }})</strong>
+                  <span class="text-xs text-zinc-500 mt-0.5">{{ ativo.quantidade }} na carteira</span>
+                </div>
+              </div>
+              
+              <div class="flex flex-col items-end text-right">
+                <strong class="text-zinc-100 text-lg">
+                  {{ saldoVisivel ? 'R$ ' + ativo.valorTotal : 'R$ •••••' }}
+                </strong>
+                <span class="text-xs font-bold px-2 py-1 rounded-md mt-1"
+                  [ngClass]="obterClasseBadge(ativo.variacao)">
+                  {{ ativo.variacao > 0 ? '↑ +' : '↓ ' }}{{ ativo.variacao }}%
+                </span>
+              </div>
             </div>
-            <div class="flex flex-col">
-              <strong class="text-zinc-100 text-base">Bitcoin (BTC)</strong>
-              <span class="text-xs text-zinc-500 mt-0.5">0.05 na carteira</span>
-            </div>
-          </div>
-          <div class="flex flex-col items-end text-right">
-            <strong class="text-zinc-100 text-lg">R$ 10.200,00</strong>
-            <span class="text-xs font-bold px-2 py-1 rounded-md mt-1 bg-emerald-500/10 text-emerald-400"
-              [ngClass]="obterClasseBadge(5.2)">
-              ↑ +5.2%
-            </span>
-          </div>
-        </div>
 
-        <div
-          class="flex justify-between items-center bg-zinc-950/50 border border-zinc-800/60 p-4 rounded-xl hover:border-amber-500/40 transition-colors group">
-          <div class="flex items-center gap-4">
-            <div class="bg-zinc-800 p-2 rounded-full group-hover:bg-zinc-700 transition-colors">
-              <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=032" alt="ETH" class="w-8 h-8">
+            <div class="w-full bg-zinc-800/50 rounded-full h-1.5 mt-2">
+              <div class="bg-amber-500 h-1.5 rounded-full" [style.width]="ativo.alocacao + '%'"></div>
             </div>
-            <div class="flex flex-col">
-              <strong class="text-zinc-100 text-base">Ethereum (ETH)</strong>
-              <span class="text-xs text-zinc-500 mt-0.5">0.30 na carteira</span>
+
+          </div>
+        }
+      </div>
+    </section>
+
+    <hr class="border-zinc-800 my-8">
+
+    <section>
+      <div class="flex justify-between items-end mb-4">
+        <h3 class="text-lg font-semibold text-zinc-200">Histórico de Transações</h3>
+        <span class="text-sm text-zinc-500">Últimos dias</span>
+      </div>
+
+      <div class="space-y-3">
+        @for (transacao of historicoTransacoes; track transacao.id) {
+          <div class="flex justify-between items-center bg-zinc-950/30 border border-zinc-800/40 p-4 rounded-xl hover:bg-zinc-900/50 transition-colors">
+            
+            <div class="flex items-center gap-4">
+              <div class="p-2 rounded-full"
+                [ngClass]="{
+                  'bg-emerald-500/10 text-emerald-500': transacao.tipo === 'COMPRA',
+                  'bg-rose-500/10 text-rose-500': transacao.tipo === 'VENDA'
+                }">
+                <span class="font-black text-lg leading-none">
+                  {{ transacao.tipo === 'COMPRA' ? '↓' : '↑' }}
+                </span>
+              </div>
+              <div class="flex flex-col">
+                <strong class="text-zinc-100 text-sm">
+                  {{ transacao.tipo === 'COMPRA' ? 'Compra' : 'Venda' }} de {{ transacao.ativo }}
+                </strong>
+                <span class="text-xs text-zinc-500 mt-0.5">{{ transacao.data }}</span>
+              </div>
             </div>
+            
+            <div class="flex flex-col items-end text-right">
+              <strong class="text-zinc-100 text-sm">
+                {{ transacao.tipo === 'COMPRA' ? '+' : '-' }}{{ transacao.quantidadeMovimentada }} {{ transacao.simbolo }}
+              </strong>
+              <span class="text-xs text-zinc-400 mt-0.5">
+                R$ {{ transacao.valorReais }}
+              </span>
+            </div>
+
           </div>
-          <div class="flex flex-col items-end text-right">
-            <strong class="text-zinc-100 text-lg">R$ 4.320,00</strong>
-            <span class="text-xs font-bold px-2 py-1 rounded-md mt-1 bg-rose-500/10 text-rose-400"
-              [ngClass]="obterClasseBadge(-1.2)">
-              ↓ -1.2%
-            </span>
-          </div>
-        </div>
+        }
       </div>
     </section>
 

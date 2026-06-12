@@ -27,6 +27,5 @@ export const routes: Routes = [
         ]
     },
 
-    // Qualquer rota inexistente joga para o login de forma segura
     { path: '**', redirectTo: 'login' }
 ];

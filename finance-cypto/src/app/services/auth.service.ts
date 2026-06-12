@@ -1,79 +1,63 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 export interface Usuario {
-    id: string;
+    userId: string;
+    username: string;
     email: string;
-    nome: string;
 }
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-
-    private tabelaUsuarios: any[] = [{
-        id: '1',
-        email: 'admin@example.com',
-        nome: 'Administrador',
-        senha: 'admin123'
-    }];
-
+    private apiUrl = 'http://localhost:8080';
     private usuarioLogadoSubject = new BehaviorSubject<Usuario | null>(null);
-
     public usuarioLogado$ = this.usuarioLogadoSubject.asObservable();
 
-    constructor() { }
-
-    async signup(nome: string, email: string, senha: string): Promise<void> {
-        await this.delay(500);
-
-        const usuarioExiste = this.tabelaUsuarios.find(u => u.email === email);
-        if (usuarioExiste) {
-            throw new Error('Este e-mail já está em uso.');
+    constructor(private http: HttpClient) {
+        const token = localStorage.getItem('token');
+        if (token) {
+            this.carregarDadosUsuario(token).subscribe({
+                error: () => this.logout()
+            });
         }
-
-        const novoUsuario = {
-            id: Math.random().toString(36).substring(2, 9), // ID aleatório
-            nome,
-            email,
-            senha
-        };
-
-        this.tabelaUsuarios.push(novoUsuario);
-
-        this.usuarioLogadoSubject.next({
-            id: novoUsuario.id,
-            email: novoUsuario.email,
-            nome: novoUsuario.nome
-        });
     }
 
-    async login(email: string, senha: string): Promise<void> {
-        await this.delay(500);
+    signup(username: string, email: string, senha: string): Observable<any> {
+        const payload = { username, email, password: senha };
+        return this.http.post(`${this.apiUrl}/users`, payload);
+    }
 
-        const usuario = this.tabelaUsuarios.find(u => u.email === email && u.senha === senha);
+    login(username: string, senha: string): Observable<any> {
+        const payload = { username, password: senha };
 
-        if (!usuario) {
-            throw new Error('E-mail ou senha incorretos.');
-        }
+        return this.http.post<{ accessToken: string }>(`${this.apiUrl}/login`, payload).pipe(
+            tap(response => {
+                console.log('Login bem-sucedido, token recebido:', response);
+                localStorage.setItem('token', response.accessToken);
+                this.carregarDadosUsuario(response.accessToken).subscribe();
+            })
+        );
+    }
 
-        this.usuarioLogadoSubject.next({
-            id: usuario.id,
-            email: usuario.email,
-            nome: usuario.nome
-        });
+    private carregarDadosUsuario(token: string): Observable<Usuario> {
+        const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+        return this.http.get<Usuario>(`${this.apiUrl}/users/me`, { headers }).pipe(
+            tap(usuario => {
+                this.usuarioLogadoSubject.next(usuario);
+            })
+        );
     }
 
     logout(): void {
+        localStorage.removeItem('token');
         this.usuarioLogadoSubject.next(null);
     }
 
     get usuarioAtual(): Usuario | null {
         return this.usuarioLogadoSubject.value;
-    }
-
-    private delay(ms: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }

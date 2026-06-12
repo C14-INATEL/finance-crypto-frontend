@@ -3,6 +3,7 @@ import { Login } from './login';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { vi } from 'vitest';
+import { of, throwError } from 'rxjs';
 
 describe('Login Component', () => {
   let component: Login;
@@ -13,7 +14,7 @@ describe('Login Component', () => {
   };
 
   const routerMock = {
-    navigate: vi.fn().mockResolvedValue(true)
+    navigate: vi.fn()
   };
 
   beforeEach(async () => {
@@ -43,28 +44,28 @@ describe('Login Component', () => {
     expect(compiled.querySelector('h2')?.textContent).toContain('Bem-vindo de volta');
   });
 
-  it('deve chamar o serviço de login e retornar sucesso', async () => {
-    authServiceMock.login.mockResolvedValue(true);
+  it('deve chamar o serviço de login e retornar sucesso', () => {
+    authServiceMock.login.mockReturnValue(of({ tokenValue: 'fake-jwt-token' }));
 
-    component.email = 'seu@email.com';
+    component.username = 'joao_ryan';
     component.password = 'senha123';
 
-    await component.onLogin();
+    component.onLogin();
 
-    expect(authServiceMock.login).toHaveBeenCalledWith('seu@email.com', 'senha123');
+    expect(authServiceMock.login).toHaveBeenCalledWith('joao_ryan', 'senha123');
     expect(routerMock.navigate).toHaveBeenCalledWith(['/home']);
   });
 
-  it('deve exibir mensagem de erro quando o serviço falhar', async () => {
-    authServiceMock.login.mockRejectedValue(new Error('Erro de API'));
+  it('deve exibir mensagem de erro quando o serviço falhar', () => {
+    authServiceMock.login.mockReturnValue(throwError(() => ({ status: 401 })));
 
-    component.email = 'errado@email.com';
+    component.username = 'errado';
     component.password = 'senhaErrada';
 
-    await component.onLogin();
+    component.onLogin();
     fixture.detectChanges();
 
-    expect(authServiceMock.login).toHaveBeenCalledWith('errado@email.com', 'senhaErrada');
-    expect(component.errorMessage).toBeTruthy();
+    expect(authServiceMock.login).toHaveBeenCalledWith('errado', 'senhaErrada');
+    expect(component.errorMessage).toBe('Usuário ou senha incorretos.');
   });
 });

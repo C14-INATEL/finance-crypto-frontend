@@ -40,21 +40,26 @@ describe('Home', () => {
     expect(component.saldoVisivel).toBe(true);
   });
 
-  it('Teste 2: Deve aumentar o patrimônio ao comprar um ativo válido', () => {
+  it('Teste 2: Deve aplicar a classe CSS correta na badge de rentabilidade', () => {
+    expect(component.obterClasseBadge(5.2)).toBe('positive');
+    expect(component.obterClasseBadge(-1.2)).toBe('negative');
+  });
+
+  it('Teste 3: Deve aumentar o patrimônio ao comprar um ativo válido', () => {
     component.patrimonioTotal = 1000;
     expect(component.comprarAtivo(500)).toBe(true);
     expect(component.patrimonioTotal).toBe(1500);
     expect(component.comprarAtivo(-100)).toBe(false);
   });
 
-  it('Teste 3: Deve diminuir o patrimônio ao vender ativo e impedir saldo negativo', () => {
+  it('Teste 4: Deve diminuir o patrimônio ao vender ativo e impedir saldo negativo', () => {
     component.patrimonioTotal = 2000;
     expect(component.venderAtivo(500)).toBe(true);
     expect(component.patrimonioTotal).toBe(1500);
     expect(component.venderAtivo(5000)).toBe(false);
   });
 
-  it('Teste 4 (Mock): Deve atualizar a cotação usando os dados simulados da API', () => {
+  it('Teste 5 (Mock): Deve atualizar a cotação usando os dados simulados da API', () => {
     expect(component.precoAtualBtc).toBe(0);
 
     component.atualizarCotacao();
@@ -63,7 +68,7 @@ describe('Home', () => {
     expect(component.mensagemErroApi).toBe('');
   });
 
-  it('Teste 5 (Mock): Deve tratar erro e exibir mensagem se a API falhar', () => {
+  it('Teste 6 (Mock): Deve tratar erro e exibir mensagem se a API falhar', () => {
     cryptoService.buscarPrecoBitcoinApi = () => { throw new Error('API Offline'); };
 
     component.atualizarCotacao();

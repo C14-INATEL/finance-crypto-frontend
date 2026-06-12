@@ -5,6 +5,7 @@ import { SignupComponent } from './screens/signup/signup';
 import { RankingAtivosComponent } from './screens/ranking-ativos/ranking-ativos.componente';
 import { LayoutComponent } from './layout/layout.component';
 import { Dashboard } from './screens/crypto-dashboard/dashboard';
+import { NoticiasComponent } from './screens/news-crypto/noticias.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -19,7 +20,8 @@ export const routes: Routes = [
         children: [
             { path: 'home', component: Home },
             { path: 'dashboard', component: Dashboard },
-            { path: 'rankingAtivos', component: RankingAtivosComponent }
+            { path: 'rankingAtivos', component: RankingAtivosComponent },
+            { path: 'noticias', component: NoticiasComponent }
         ]
     },
 

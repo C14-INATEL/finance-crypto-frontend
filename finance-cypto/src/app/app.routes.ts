@@ -7,6 +7,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { Dashboard } from './screens/crypto-dashboard/dashboard';
 import { NoticiasComponent } from './screens/news-crypto/noticias.component';
 import { ProfileComponent } from './screens/profile/profile.component';
+import { PortfolioComponent } from './screens/portfolio/portfolio.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -24,6 +25,7 @@ export const routes: Routes = [
             { path: 'rankingAtivos', component: RankingAtivosComponent },
             { path: 'noticias', component: NoticiasComponent },
             { path: 'perfil', component: ProfileComponent },
+            { path: 'portfolio', component: PortfolioComponent }
         ]
     },
 

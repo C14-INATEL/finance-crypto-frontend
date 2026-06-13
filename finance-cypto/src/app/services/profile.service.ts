@@ -1,25 +1,66 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ProfileService {
-    private apiUrl = 'http://localhost:8080/users/me';
 
-    constructor(private http: HttpClient) { }
+    constructor() { }
 
-    private getHeaders(): HttpHeaders {
-        const token = localStorage.getItem('token');
-        return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    private getUsuarioLogadoId(): string | null {
+        const userStr = localStorage.getItem('usuario_logado');
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            return user.userId;
+        }
+        return null;
     }
 
     atualizarPerfil(dados: { username?: string; email?: string; password?: string }): Observable<any> {
-        return this.http.put(this.apiUrl, dados, { headers: this.getHeaders() });
+        const userId = this.getUsuarioLogadoId();
+
+        if (!userId) {
+            return of({ success: false, message: 'Usuário não logado.' });
+        }
+
+        const dbStr = localStorage.getItem('db_usuarios');
+        if (dbStr) {
+            let db = JSON.parse(dbStr);
+            const index = db.findIndex((u: any) => u.userId === userId);
+            if (index !== -1) {
+                db[index] = { ...db[index], ...dados };
+                localStorage.setItem('db_usuarios', JSON.stringify(db));
+            }
+        }
+
+        const logadoStr = localStorage.getItem('usuario_logado');
+        if (logadoStr) {
+            let logado = JSON.parse(logadoStr);
+            logado = { ...logado, ...dados };
+            localStorage.setItem('usuario_logado', JSON.stringify(logado));
+        }
+
+        return of({ success: true, message: 'Perfil atualizado com sucesso.' });
     }
 
     excluirConta(): Observable<any> {
-        return this.http.delete(this.apiUrl, { headers: this.getHeaders() });
+        const userId = this.getUsuarioLogadoId();
+
+        if (!userId) {
+            return of({ success: false, message: 'Usuário não logado.' });
+        }
+
+        const dbStr = localStorage.getItem('db_usuarios');
+        if (dbStr) {
+            let db = JSON.parse(dbStr);
+            db = db.filter((u: any) => u.userId !== userId);
+            localStorage.setItem('db_usuarios', JSON.stringify(db));
+        }
+
+        localStorage.removeItem('usuario_logado');
+        localStorage.removeItem('token');
+
+        return of({ success: true, message: 'Conta excluída com sucesso.' });
     }
 }

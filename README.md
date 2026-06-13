@@ -14,6 +14,7 @@ O frontend foi desenvolvido em **Angular** e faz parte de uma aplicação maior,
 * [Repositório Backend](https://github.com/Greed2003/finance-crypto-backend)
 * [Pipeline CI/CD - CircleCI](https://app.circleci.com/pipelines/github/C14-INATEL/finance-crypto-frontend/28/workflows/a344ab96-cd0d-4d99-96e7-1438916be580/jobs/82)
 * [Quadro Kanban / Workspace no Notion](https://app.notion.com/p/C216-projeto-372d1c69a7ac809e8dc2ebc70f97b49d?source=copy_link)
+* [site / finance-crypto](https://finance-crypto-frontend.vercel.app/login)
 
 ---
 

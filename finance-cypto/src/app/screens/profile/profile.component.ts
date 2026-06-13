@@ -1,10 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EditProfileModalComponent } from './modals/edit-profile-modal.component';
 import { DeleteAccountModalComponent } from './modals/delete-account-modal.component';
-import { AuthService } from '../../services/auth.service';
 import { ProfileService } from '../../services/profile.service';
-import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-profile',
@@ -12,27 +10,19 @@ import { Subscription } from 'rxjs';
     imports: [CommonModule, EditProfileModalComponent, DeleteAccountModalComponent],
     templateUrl: './profile.component.html'
 })
-export class ProfileComponent implements OnInit, OnDestroy {
+export class ProfileComponent implements OnInit {
     usuario: any;
-    private sub!: Subscription;
 
     showEditModal = false;
     showDeleteModal = false;
 
-    constructor(
-        private authService: AuthService,
-        private profileService: ProfileService
-    ) { }
+    constructor(private profileService: ProfileService) { }
 
     ngOnInit() {
-        // Escuta o estado do usuário logado
-        this.sub = this.authService.usuarioLogado$.subscribe(user => {
-            this.usuario = user;
-        });
-    }
-
-    ngOnDestroy() {
-        if (this.sub) this.sub.unsubscribe();
+        const userStr = localStorage.getItem('usuario_logado');
+        if (userStr) {
+            this.usuario = JSON.parse(userStr);
+        }
     }
 
     toggleEditModal() { this.showEditModal = !this.showEditModal; }
@@ -40,28 +30,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     handleUpdate(novosDados: any) {
         this.profileService.atualizarPerfil(novosDados).subscribe({
-            next: (resposta) => {
+            next: () => {
                 this.usuario = { ...this.usuario, ...novosDados };
                 this.showEditModal = false;
-                alert('Perfil atualizado com sucesso!');
+                window.location.reload();
             },
-            error: (erro) => {
-                console.error('Erro ao atualizar perfil', erro);
-                alert('Falha ao atualizar o perfil. Verifique os logs.');
+            error: () => {
+                alert('Falha ao atualizar o perfil.');
             }
         });
     }
 
-    // Exemplo de como você chamaria a exclusão
     handleDelete() {
         this.profileService.excluirConta().subscribe({
             next: () => {
                 this.showDeleteModal = false;
-                this.authService.logout(); // Desloga e limpa o token
                 window.location.href = '/login';
             },
-            error: (erro) => {
-                console.error('Erro ao excluir conta', erro);
+            error: () => {
                 alert('Falha ao excluir a conta.');
             }
         });

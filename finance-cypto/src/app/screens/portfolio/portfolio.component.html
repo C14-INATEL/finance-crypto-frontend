@@ -1,0 +1,108 @@
+<div class="max-w-5xl mx-auto w-full p-4 md:p-8 text-zinc-100 font-sans">
+
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div>
+            <h1
+                class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-600 uppercase tracking-widest">
+                Análise de Portfólio
+            </h1>
+            <p class="text-zinc-500 text-sm mt-1">Métricas de rentabilidade e composição da sua carteira</p>
+        </div>
+        <a routerLink="/home"
+            class="px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-bold rounded-xl border border-zinc-700/50 transition-all">
+            Voltar para Carteira
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-lg shadow-black/40">
+            <p class="text-zinc-500 text-xs uppercase font-semibold tracking-wider">Patrimônio Líquido</p>
+            <h2 class="text-2xl text-white font-black mt-1 font-mono">R$ {{ patrimonioTotal | number:'1.2-2':'pt-BR' }}
+            </h2>
+        </div>
+
+        <div class="bg-zinc-900 border rounded-2xl p-5 shadow-lg shadow-black/40"
+            [ngClass]="lucroPrejuizoTotal >= 0 ? 'border-emerald-500/20' : 'border-rose-500/20'">
+            <p class="text-zinc-500 text-xs uppercase font-semibold tracking-wider">Retorno Absoluto</p>
+            <h2 class="text-2xl font-black mt-1 font-mono"
+                [ngClass]="lucroPrejuizoTotal >= 0 ? 'text-emerald-400' : 'text-rose-400'">
+                {{ lucroPrejuizoTotal >= 0 ? '+' : '' }}R$ {{ lucroPrejuizoTotal | number:'1.2-2':'pt-BR' }}
+            </h2>
+        </div>
+
+        <div class="bg-zinc-900 border rounded-2xl p-5 shadow-lg shadow-black/40"
+            [ngClass]="percentualRentabilidade >= 0 ? 'border-emerald-500/20' : 'border-rose-500/20'">
+            <p class="text-zinc-500 text-xs uppercase font-semibold tracking-wider">Rentabilidade Geral</p>
+            <h2 class="text-2xl font-black mt-1 font-mono"
+                [ngClass]="percentualRentabilidade >= 0 ? 'text-emerald-400' : 'text-rose-400'">
+                {{ percentualRentabilidade >= 0 ? '+' : '' }}{{ percentualRentabilidade | number:'1.2-2':'pt-BR' }}%
+            </h2>
+        </div>
+
+        <div class="bg-zinc-900 border border-amber-500/20 rounded-2xl p-5 shadow-lg shadow-black/40">
+            <p class="text-amber-500 text-xs uppercase font-semibold tracking-wider">Maior Exposição</p>
+            <h2 class="text-lg text-white font-bold mt-2 truncate">{{ ativoMaiorPosicao }}</h2>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 lg:col-span-1 flex flex-col justify-between">
+            <div>
+                <h3 class="text-lg font-bold text-zinc-200">Divisão de Ativos</h3>
+                <p class="text-xs text-zinc-500 mt-0.5">Sua alocação percentual atual</p>
+            </div>
+            <div class="py-4 flex justify-center">
+                <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [labels]="chartOptions.labels"
+                    [colors]="chartOptions.colors" [stroke]="chartOptions.stroke" [legend]="chartOptions.legend"
+                    [dataLabels]="chartOptions.dataLabels" [tooltip]="chartOptions.tooltip"
+                    [plotOptions]="chartOptions.plotOptions" class="w-full">
+                </apx-chart>
+            </div>
+        </div>
+
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 lg:col-span-2">
+            <h3 class="text-lg font-bold text-zinc-200 mb-4">Detalhamento Balançado</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead
+                        class="bg-zinc-950/60 text-zinc-500 uppercase text-xs tracking-wider border-b border-zinc-800">
+                        <tr>
+                            <th class="p-4 font-semibold">Ativo</th>
+                            <th class="p-4 font-semibold text-right">Quantidade</th>
+                            <th class="p-4 font-semibold text-right">Valor em Carteira</th>
+                            <th class="p-4 font-semibold text-right">Alocação</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-zinc-300 divide-y divide-zinc-800/50">
+                        @for (ativo of minhaCarteira; track ativo.id) {
+                        <tr class="hover:bg-zinc-800/20 transition-colors">
+                            <td class="p-4 flex items-center gap-3">
+                                <img [src]="ativo.icone" class="w-6 h-6 rounded-full">
+                                <span class="font-bold text-zinc-100">{{ ativo.nome }}</span>
+                                <span class="text-xs font-mono text-zinc-500 uppercase">({{ ativo.simbolo }})</span>
+                            </td>
+                            <td class="p-4 text-right font-mono">{{ ativo.quantidade | number:'1.2-6':'pt-BR' }}</td>
+                            <td class="p-4 text-right font-mono text-zinc-100">R$ {{ ativo.valorTotal |
+                                number:'1.2-2':'pt-BR' }}</td>
+                            <td class="p-4 text-right font-mono">
+                                <div class="flex items-center justify-end gap-2">
+                                    <span class="font-bold text-amber-500">{{ ativo.alocacao | number:'1.1-1':'pt-BR'
+                                        }}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                        @if(minhaCarteira.length === 0) {
+                        <tr>
+                            <td colspan="4" class="p-8 text-center text-zinc-500 font-medium">
+                                Adicione ativos para habilitar a tabela de balanço.
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
